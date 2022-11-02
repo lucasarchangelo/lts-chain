@@ -24,3 +24,32 @@ a {
     background: black;
   }
 }
+
+.content_site {
+  padding-top: 75px;
+}
+
+.home_title {
+  padding-top: 60px;
+  font-family: "Montserrat", sans-serif;
+  color: #444;
+  line-height: 130%;
+  font-weight: 500;
+  font-size: 52px;
+  margin-bottom: 15px;
+}
+
+.home_text {
+  color: #707070;
+  font-size: 19px;
+  line-height: 32px;
+}
+
+.text_site_color {
+  color: #707070;
+}
+
+.card_site {
+  margin-bottom: 24px;
+  width: "18rem";
+}
