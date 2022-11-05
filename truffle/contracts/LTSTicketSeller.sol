@@ -31,10 +31,10 @@ contract LTSTicketSeller is Ownable {
         uriEpic = "epic.mp4";
 
         maxNft = 1000;
-        nftCommonPrice = 40000000000000000;
-        nftUncommonPrice = 900000000000000;
-        nftRarePrice = 1200000000000000;
-        nftEpicPrice = 5000000000000000;
+        nftCommonPrice =   4000000000000000;
+        nftUncommonPrice = 9000000000000000;
+        nftRarePrice =     12000000000000000;
+        nftEpicPrice =     50000000000000000;
     }
 
     function purchasecommon() public payable {
@@ -75,10 +75,10 @@ contract LTSTicketSeller is Ownable {
         string memory _uri
     ) private {
         require(maxNft > nftPurchased, "Sold out.");
-        payable(owner()).transfer(_value);
-        token.safeMint(_buyer, _uri);
         buyers[_buyer] = true;
         nftPurchased++;
+        payable(owner()).transfer(_value);
+        token.safeMint(_buyer, _uri);
     }
 
     function setcommonPrice(uint256 _price) public onlyOwner {
@@ -97,6 +97,10 @@ contract LTSTicketSeller is Ownable {
         nftEpicPrice = _price;
     }
 
+    function getAllPrices() public view returns (uint256, uint256, uint256, uint256) {
+        return (nftCommonPrice, nftUncommonPrice, nftRarePrice, nftEpicPrice);
+    }
+
     function setAllPrices(
         uint256 _price1,
         uint256 _price2,
@@ -109,7 +113,7 @@ contract LTSTicketSeller is Ownable {
         nftEpicPrice = _price4;
     }
 
-    function setMaxNFT(uint _value) public onlyOwner {
+    function setMaxNFT(uint256 _value) public onlyOwner {
         maxNft = _value;
     }
 

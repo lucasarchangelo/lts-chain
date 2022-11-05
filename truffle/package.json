@@ -11,7 +11,8 @@
     "dotenv": "^16.0.3"
   },
   "scripts": {
-    "test": "truffle test"
+    "test": "truffle test",
+    "start_local": "ganache -i 666 -m \"teach core boat want author animal neglect social bone page modify mass\""
   },
   "author": "",
   "license": "MIT"

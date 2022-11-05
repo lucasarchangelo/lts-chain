@@ -16,14 +16,16 @@ export interface ITicketSeller {
     purchaseUncommon(): any;
     purchaseRare(): any;
     purchaseEpic(): any;
+    getAllPrices(): any;
   };
 }
 
 export class Web3Helper {
   private static _instance: Web3Helper;
 
-  private readonly NETWORK_GOERLI = 5;
-  private readonly NETWORK_GOERLI_HEX = "0x5";
+  // private readonly NETWORK_GOERLI = 5;
+  // private readonly NETWORK_GOERLI_HEX = "0x5";
+
   private web3: Web3 = new Web3();
   private accounts: Array<string> = [];
   private connected = false;
@@ -42,12 +44,12 @@ export class Web3Helper {
 
   public async init(provider: any) {
     if (provider) {
-      if (provider.chainId !== this.NETWORK_GOERLI) {
-        await provider.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: this.NETWORK_GOERLI_HEX }],
-        });
-      }
+      // if (provider.chainId !== this.NETWORK_GOERLI) {
+      //   await provider.request({
+      //     method: "wallet_switchEthereumChain",
+      //     params: [{ chainId: this.NETWORK_GOERLI_HEX }],
+      //   });
+      // }
       await provider.request({ method: "eth_requestAccounts" });
       this.listeningAccountChange(provider);
       this.listeningNetworkChange(provider);
@@ -57,19 +59,19 @@ export class Web3Helper {
     }
   }
 
-  //   public get getSellerAddress(): string {
-  //     return TicketSeller.networks[this.NETWORK_GOERLI].address;
-  //   }
+  public get getSellerAddress(): string {
+    return TicketSeller.networks["666"].address;
+  }
 
-  //   public get getTicketNFTAddress(): string {
-  //     return TicketNFT.networks[this.NETWORK_GOERLI].address;
-  //   }
+  public get getTicketNFTAddress(): string {
+    return TicketSeller.networks["666"].address;
+  }
 
   public getSaleInstance(): ITicketSeller {
     if (this.web3) {
       return new this.web3.eth.Contract(
-        TicketSeller.abi as any
-        // (TicketSeller.networks[this.NETWORK_GOERLI]).address
+        TicketSeller.abi as any,
+        (TicketSeller.networks["666"]).address
       );
     } else {
       throw Error("web3Confg isnt Initialized.");
