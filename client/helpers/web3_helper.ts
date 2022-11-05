@@ -23,7 +23,7 @@ export interface ITicketSeller {
 export class Web3Helper {
   private static _instance: Web3Helper;
 
-  // private readonly NETWORK_GOERLI = 5;
+  private readonly NETWORK_GOERLI = "5";
   // private readonly NETWORK_GOERLI_HEX = "0x5";
 
   private web3: Web3 = new Web3();
@@ -60,18 +60,18 @@ export class Web3Helper {
   }
 
   public get getSellerAddress(): string {
-    return TicketSeller.networks["666"].address;
+    return TicketSeller.networks[this.NETWORK_GOERLI].address;
   }
 
   public get getTicketNFTAddress(): string {
-    return TicketSeller.networks["666"].address;
+    return TicketSeller.networks[this.NETWORK_GOERLI].address;
   }
 
   public getSaleInstance(): ITicketSeller {
     if (this.web3) {
       return new this.web3.eth.Contract(
         TicketSeller.abi as any,
-        (TicketSeller.networks["666"]).address
+        (TicketSeller.networks[this.NETWORK_GOERLI]).address
       );
     } else {
       throw Error("web3Confg isnt Initialized.");

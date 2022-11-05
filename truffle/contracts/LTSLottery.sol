@@ -4,8 +4,6 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface VRFv2ConsumerChainLink {
-    function requestRandomWords() external returns (uint256 requestId);
-
     function getRequestStatus(uint256 _requestId)
         external
         view
@@ -14,6 +12,7 @@ interface VRFv2ConsumerChainLink {
 
 contract LTSLottery is Ownable {
     VRFv2ConsumerChainLink private chainLinkConsumer;
+    address receiver;
 
     struct User {
         bool hasTicket;
@@ -39,9 +38,11 @@ contract LTSLottery is Ownable {
         address _consumer,
         string memory _name,
         uint256 _ticketPrice,
-        uint32 _minTicket
+        uint32 _minTicket,
+        address _receiver
     ) {
         chainLinkConsumer = VRFv2ConsumerChainLink(_consumer);
+        receiver = _receiver;
 
         lottery.name = _name;
         lottery.ticketPrice = _ticketPrice;
@@ -84,7 +85,11 @@ contract LTSLottery is Ownable {
             "The Lottery didnt get the minimum required yet."
         );
         lottery.finalized = true;
-        requestRandomWord();
+        // requestRandomWord();
+    }
+
+    function setChainLinkID(uint256 _index) public onlyOwner {
+        lottery.indexChainLink = _index;
     }
 
     function setUpWinner() public onlyOwner {
@@ -120,8 +125,8 @@ contract LTSLottery is Ownable {
         lottery.claimed = true;
         uint256 _prize = (lottery.balance / 10) * 7;
         uint256 _onwerValue = lottery.balance - ((lottery.balance / 10) * 7);
+        payable(receiver).transfer(_onwerValue);
         payable(msg.sender).transfer(_prize);
-        payable(owner()).transfer(_onwerValue);
     }
 
     function verifyFinalizeLottery()
@@ -138,21 +143,19 @@ contract LTSLottery is Ownable {
         return (fulfilled, randomWords);
     }
 
-    function requestRandomWord() private {
-        lottery.indexChainLink = chainLinkConsumer.requestRandomWords();
-    }
-
     function getLotteryProperties()
         public
         view
         returns (
-            string memory,
-            uint256,
-            uint32,
-            uint256,
-            bool,
-            address,
-            bool
+            string memory name,
+            uint256 ticketPrice,
+            uint32 minTicket,
+            uint256 balance,
+            bool finalized,
+            address winner,
+            bool claimed,
+            uint256 indexChainLink
+
         )
     {
         return (
@@ -162,7 +165,8 @@ contract LTSLottery is Ownable {
             lottery.balance,
             lottery.finalized,
             lottery.winner,
-            lottery.claimed
+            lottery.claimed,
+            lottery.indexChainLink
         );
     }
 }

@@ -7,12 +7,23 @@ import "./LTSLottery.sol";
 interface ILTSLottery {
     function finalizeLottery() external;
 
+    function setChainLinkID(uint256 _index) external;
+
     function setUpWinner() external;
 
     function verifyFinalizeLottery()
         external
         view
         returns (bool, uint256[] memory);
+}
+
+interface ILTSConsumer {
+    function requestRandomWords() external returns (uint256 requestId);
+
+    function getRequestStatus(uint256 _requestId)
+        external
+        view
+        returns (bool fulfilled, uint256[] memory randomWords);
 }
 
 contract LTSLotteries is Ownable {
@@ -30,7 +41,13 @@ contract LTSLotteries is Ownable {
         uint32 _minTicket
     ) public onlyOwner {
         address _newLotteryAddress = address(
-            new LTSLottery(chainLinkConsumer, _name, _ticketPrice, _minTicket)
+            new LTSLottery(
+                chainLinkConsumer,
+                _name,
+                _ticketPrice,
+                _minTicket,
+                msg.sender
+            )
         );
         lotteries.push(_newLotteryAddress);
     }
@@ -38,6 +55,9 @@ contract LTSLotteries is Ownable {
     function finalizeLottery(uint64 _index) public onlyOwner {
         ILTSLottery lottery = ILTSLottery(lotteries[_index]);
         lottery.finalizeLottery();
+        uint256 _chainLinkIndex = ILTSConsumer(chainLinkConsumer)
+            .requestRandomWords();
+        lottery.setChainLinkID(_chainLinkIndex);
     }
 
     function setUpWinner(uint64 _index) public onlyOwner {
@@ -45,7 +65,11 @@ contract LTSLotteries is Ownable {
         lottery.setUpWinner();
     }
 
-    function verifyFinalizeLottery(uint64 _index) public view returns (bool, uint256[] memory) {
+    function verifyFinalizeLottery(uint64 _index)
+        public
+        view
+        returns (bool, uint256[] memory)
+    {
         ILTSLottery lottery = ILTSLottery(lotteries[_index]);
         return lottery.verifyFinalizeLottery();
     }

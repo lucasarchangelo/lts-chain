@@ -54,7 +54,7 @@ contract LTSConsumer is VRFConsumerBaseV2, AccessControl {
 
     // For this example, retrieve 2 random values in one request.
     // Cannot exceed VRFCoordinatorV2.MAX_NUM_WORDS.
-    uint32 numWords = 2;
+    uint32 numWords = 1;
 
     bytes32 public constant REQUEST_RANDOM = keccak256("REQUEST_RANDOM");
 
